@@ -11,6 +11,7 @@ const config: DocsThemeConfig = {
       <meta property="og:url" content={`https://edchapman.co.uk${asPath}`} />
       <meta property="og:title" content={frontMatter.title || 'EC Docs'} />
       <meta property="og:description" content={frontMatter.description || 'Ed Chapman Documentation'} />
+      <meta name="description" content='Ed Chapman documentation and notes' />
       <link rel="icon" href="/images/favicon/favicon.ico" type="image/ico" />
     </>
   },
