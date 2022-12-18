@@ -1,0 +1,54 @@
+# Binary Search
+
+* One of the fastest searching algorithms on a **sorted** collection.
+* The array is divided, so time increases at a lesser rate than the size of the array.
+* All options have a logarithmic time complexity `O(log(n))`.
+* 2 options:
+  * Iterative: Space complexity constant `O(1)`
+  * Recursive: Space complexity logarithmic `O(log(n))`
+
+## JS Solutions
+
+Iterative
+```javascript
+/**
+ * Better space complexity as regardless of the size of the array, we don't create more arrays.
+ * */
+const iterativeBinarySearch = (arr, searchVal) => {
+  let left = 0
+  let right = arr.length - 1
+
+  while (left < right) {
+    let mid = Math.floor((left + right) / 2)
+    if (searchVal === arr[mid]) {
+      return mid
+    } else if (searchVal < arr[mid]) {
+      right = mid - 1
+    } else {
+      left = mid + 1
+    }
+  }
+  return false
+}
+```
+
+Recursive
+```javascript
+const recursiveBinarySearch = (arr, searchVal) => {
+  return searchHelper(arr, searchVal, 0, arr.length -1)
+}
+
+const searchHelper = (arr, searchVal, left, right) => {
+  if (left < right) {
+    return false
+  }
+  let mid = Math.floor((left + right) / 2)
+  if (searchVal === arr[mid]) {
+    return mid
+  } else if (searchVal < arr[mid]) {
+    return searchHelper(arr, searchVal, left, mid - 1)
+  } else {
+    return searchHelper(arr, searchVal, mid + 1, right)
+  }
+}
+```
