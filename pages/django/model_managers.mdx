@@ -1,0 +1,43 @@
+# Model Managers
+
+Extend the base Manager class of a model to add/or to modify the initial QuerySet the Manager returns.
+
+e.g. `MyModel.objects.custom_queryset()`
+
+There are two main advantages of this:
+  1. Clarity: The implementation detail of the filter can be abstracted away, making logic easier to read.
+  2. Consistency: The same filter can be reused reducing the risk of differing implementations in the codebase.
+
+Manager
+```python
+# polls/managers.py
+
+from django.db import models
+from django.db.models.functions import Coalesce
+
+class PollManager(models.Manager):
+    def with_counts(self):
+        return self.annotate(
+            num_responses=Coalesce(models.Count("response"), 0)
+        )
+```
+
+Models
+```python
+# polls/models.py
+
+from django.db import models
+from polls.managers import PollManager
+
+class OpinionPoll(models.Model):
+    question = models.CharField(max_length=200)
+    objects = PollManager()
+
+class Response(models.Model):
+    poll = models.ForeignKey(OpinionPoll, on_delete=models.CASCADE)
+```
+
+Usage
+```python
+OpinionPoll.objects.with_counts()
+```
