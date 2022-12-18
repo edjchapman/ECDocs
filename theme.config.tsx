@@ -32,6 +32,9 @@ const config: DocsThemeConfig = {
     link: 'https://github.com/edjchapman',
   },
   docsRepositoryBase: 'https://github.com/edjchapman/documentation/tree/main/pages',
+  editLink: {
+    text: ''
+  },
   useNextSeoProps: () => {
     const { route }  = useRouter()
     if ( route !== '/') {
