@@ -35,6 +35,9 @@ const config: DocsThemeConfig = {
   editLink: {
     text: ''
   },
+  feedback: {
+    content: ''
+  },
   useNextSeoProps: () => {
     const { route }  = useRouter()
     if ( route !== '/') {
