@@ -1,0 +1,42 @@
+Debian Upgrade
+==============
+
+## Upgrade Steps
+1. Backup the system.
+2. Update existing packages and reboot.
+3. Replace the contents of `/etc/apt/sources.list` with the desired Debian version's list below.
+4. Update the packages index `apt update`
+5. Prepare for the operating system minimal upgrade `apt upgrade --without-new-pkgs`
+6. Full upgrade the system `apt full-upgrade`
+
+## Source Lists
+### Debian 11 Bullseye
+```shell
+deb http://ftp.uk.debian.org/debian/ bullseye main contrib non-free
+deb-src http://ftp.uk.debian.org/debian/ bullseye main contrib non-free
+
+deb http://ftp.uk.debian.org/debian/ bullseye-updates main contrib non-free
+deb-src http://ftp.uk.debian.org/debian/ bullseye-updates main contrib non-free
+
+deb http://deb.debian.org/ bullseye-security main contrib non-free
+deb-src http://deb.debian.org/ bullseye-security main contrib non-free
+
+deb http://deb.debian.org/ bullseye-backports main contrib non-free
+deb-src http://deb.debian.org/ bullseye-backports main contrib non-free
+```
+
+### Debian 10 Buster
+
+```shell copy
+deb http://ftp.uk.debian.org/debian/ buster main contrib non-free
+deb-src http://ftp.uk.debian.org/debian/ buster main contrib non-free
+
+deb http://ftp.uk.debian.org/debian/ buster-updates main contrib non-free
+deb-src http://ftp.uk.debian.org/debian/ buster-updates main contrib non-free
+
+deb http://security.debian.org/ buster/updates main contrib non-free
+deb-src http://security.debian.org/ buster/updates main contrib non-free
+
+deb http://deb.debian.org/ buster-backports main contrib non-free
+deb-src http://deb.debian.org/ buster-backports main contrib non-free
+```
