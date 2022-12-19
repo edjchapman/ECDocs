@@ -1,0 +1,55 @@
+## Acme SSL Certificates
+
+This method uses the acme tool to issue SSL certificates to non-publicy accessible resources.
+
+If the server is publicly accessible, then it's simpler to use the [certbot tool](https://certbot.eff.org/)
+
+## Install Acme
+
+```shell filename="get_acme.sh" copy
+curl https://get.acme.sh | sh
+```
+
+The script will install into your home dir `~/.acme.sh/`.  It will also set up a cron task to renew the certificate daily:
+```shell filename="crontab" copy
+# Renew certificate everyday at midnight
+0 0 * * * "/home/user/.acme.sh"/acme.sh --cron --home "/home/user/.acme.sh" > /dev/null
+```
+
+## Registrar API keys
+
+The acme script needs to update the DNS records of the URL to validate the link to the server
+[(docs)](https://github.com/acmesh-official/acme.sh/wiki/dnsapi).
+
+(This example uses GoDaddy)
+
+[Get API keys from GoDaddy](https://developer.godaddy.com/keys/) and export them to the shell session.
+
+```shell script
+export GD_Key="key_here"
+export GD_Secret="secret_here"
+```
+
+## Issue the certificate
+
+Update domain and paths to export keys and certificates to:
+```shell filename="issue.sh" copy
+./acme.sh --server letsencrypt \
+--key-file /target/path/nginx/ssl/key_name.key \
+--fullchain-file /target/path/nginx/ssl/cert_name.crt \
+--renew --dns dns_gd -d your-domain.com
+```
+
+Specify the path to the key and cert in NGINX conf:
+```nginx filename="proxy.nginx"
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+
+    server_name your-domain.com;
+
+    ssl_certificate /target/path/nginx/ssl/cert_name.crt;
+    ssl_certificate_key /target/path/nginx/ssl/key_name.key;
+    # ...
+}
+```
