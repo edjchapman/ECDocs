@@ -1,6 +1,6 @@
 import React from 'react'
 import { DocsThemeConfig } from 'nextra-theme-docs'
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import { useConfig } from 'nextra-theme-docs'
 
 const config: DocsThemeConfig = {
@@ -54,10 +54,10 @@ const config: DocsThemeConfig = {
   footer: {
     text: <>
     <span>
-      {new Date().getFullYear()} © <a href="https://edchapman.co.uk" target="_blank">Ed Chapman</a>.
+      {new Date().getFullYear()} © <a href="https://edchapman.co.uk" target="_blank" rel="noreferrer">Ed Chapman</a>.
       <br/>
       <sub>
-        <a href="https://nextra.site">Site built with Nextra</a>
+        <a href="https://nextra.site" target="_blank" rel="noreferrer">Site built with Nextra</a>
       </sub>
     </span>
 
