@@ -49,9 +49,16 @@ const config: DocsThemeConfig = {
     next: true
   },
   footer: {
-    text: <span>
+    text: <>
+    <span>
       {new Date().getFullYear()} © <a href="https://edchapman.co.uk" target="_blank">Ed Chapman</a>.
-    </span>,
+      <br/>
+      <sub>
+        <a href="https://nextra.site">Site built with Nextra</a>
+      </sub>
+    </span>
+
+    </>,
   }
 }
 
