@@ -9,8 +9,7 @@
 
 ## JS Solutions
 
-Iterative
-```javascript
+```javascript filename="iterative.js" showLineNumbers copy
 /**
  * Better space complexity as regardless of the size of the array, we don't create more arrays.
  * */
@@ -32,8 +31,7 @@ const iterativeBinarySearch = (arr, searchVal) => {
 }
 ```
 
-Recursive
-```javascript
+```javascript filename="recursive.js" showLineNumbers copy
 const recursiveBinarySearch = (arr, searchVal) => {
   return searchHelper(arr, searchVal, 0, arr.length -1)
 }

@@ -2,16 +2,11 @@
 
 Extend the base Manager class of a model to add/or to modify the initial QuerySet the Manager returns.
 
-e.g. `MyModel.objects.custom_queryset()`
-
 There are two main advantages of this:
   1. Clarity: The implementation detail of the filter can be abstracted away, making logic easier to read.
   2. Consistency: The same filter can be reused reducing the risk of differing implementations in the codebase.
 
-Manager
-```python
-# polls/managers.py
-
+```python filename="managers.py" showLineNumbers copy
 from django.db import models
 from django.db.models.functions import Coalesce
 
@@ -22,10 +17,7 @@ class PollManager(models.Manager):
         )
 ```
 
-Models
-```python
-# polls/models.py
-
+```python filename="models.py" showLineNumbers copy
 from django.db import models
 from polls.managers import PollManager
 
@@ -37,7 +29,6 @@ class Response(models.Model):
     poll = models.ForeignKey(OpinionPoll, on_delete=models.CASCADE)
 ```
 
-Usage
-```python
+```python filename="usage.py" showLineNumbers copy
 OpinionPoll.objects.with_counts()
 ```
