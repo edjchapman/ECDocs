@@ -1,0 +1,89 @@
+Django Database Transactions
+============================
+
+Django's default behaviour is to run in autocommit mode.  Each query is immediately commited to the database.
+
+Django uses transactions or savepoints automatically to guarantee the integrity of ORM operations that require
+multiple queries, especially `delete()` and `update()` queries.
+
+Django's `TestCase` class also wraps each test in a transaction for performance reasons.
+
+## Atomic Requests
+
+A common way to handle transactions on the web is to wrap each request in a transaction.
+Set `ATOMIC_REQUESTS` to True in the database configuration.
+
+Therefore, before calling a view function, Django starts a transaction.  If the response is produced without problems,
+Django commits the transaction.  If the view produces an exception, Django rolls back the transaction.
+
+This behaviour can be overriden using a decorator:
+
+```python showLineNumbers copy
+from django.db import transaction
+
+@transaction.non_atomic_requests
+def my_view(request):
+    # do_stuff()
+    ...
+
+@transaction.non_atomic_requests(using='other')
+def my_other_view(request):
+    # do_stuff_on_the_other_database()
+    ...
+```
+
+## Controlling transactions
+
+Atomicity is the defining property of database transactions.  `atomic` allows us to create
+a block of code with which the atomicity on the database is guaranteed. If the block of code is successfully completed,
+the changes are committed to the database.  If there is an exception, the changes are rolled back.
+
+Django provides a single API to control database transactions.
+
+```python showLineNumbers
+from django.db.transaction import atomic
+
+atomic(using=None, savepoint=True, durable=False)
+```
+
+As a decorator:
+```python showLineNumbers copy
+from django.db import transaction
+
+@transaction.atomic
+def viewfunc(request):
+    # This code executes inside a transaction
+    ...
+```
+
+As a context manager:
+```python showLineNumbers copy
+from django.db import transaction
+
+def viewfunc(request):
+    # Here executes in autocomit mode (Django's default).
+    ...
+    with transaction.atomic():
+        # Executes inside a transaction.
+        ...
+```
+
+Using a try/except block to allow for natural handling of integrity errors.
+```python showLineNumbers copy
+from django.db import IntegrityError, transaction
+
+@transaction.atomic
+def viewfunc(request):
+
+    create_parent()
+
+    try:
+        with transaction.atomic():
+            generate_relationships()
+    except IntegrityError:
+        handle_exception()
+
+    add_children()
+```
+Here, if the inner transaction fails it will have been safely rolled back by the exception handler.\
+The `create_parent()` and `add_children()` logic is not affected.
