@@ -1,0 +1,147 @@
+Django Project Setup
+========================
+
+#### Install requirements
+
+```shell
+pip install -r requirements.txt
+```
+
+#### Install git hook scripts
+
+```shell
+pre-commit install
+```
+
+#### Setup Pyenv
+
+```shell
+# Install Pyenv using Homebrew
+brew install pyenv
+
+# Install system packages needed to install Python
+brew install openssl@1.1 openssl readline sqlite3 xz zlib
+
+# Restart your terminal
+exec "$SHELL"
+
+# Install the appropriate Python versions
+pyenv install 3.10.6
+pyenv global 3.10.6
+pyenv install 2.7.18
+```
+
+#### Install Virtualenv for managing separate Python environments
+
+```shell
+# Install virtualenvwrapper and its Pyenv wrapper
+PIP_REQUIRE_VIRTUALENV=false pip install virtualenvwrapper
+brew install pyenv-virtualenvwrapper
+
+# Add the following lines to your shell startup script (~/.zshrc or ~/.bashrc)
+# virtualenvwrapper
+export WORKON_HOME=$HOME/.virtualenvs
+pyenv virtualenvwrapper
+
+# Restart shell
+exec "$SHELL"
+```
+
+#### PostgreSQL
+
+Install Postgres using the [Postgres.app macOS app](https://postgresapp.com/) following the instructions they provide
+to configure your $PATH to use the included command line tools. For example:
+
+```shell
+cat >> ~/.zshrc <<EOL
+export PATH="\$PATH:/Applications/Postgres.app/Contents/Versions/latest/bin"
+EOL
+```
+
+#### Memcached
+
+Caching service
+
+```shell
+brew install libmemcached memcached
+```
+
+#### RabbitMQ
+
+Message broker with Celery
+
+```shell
+brew install rabbitmq
+```
+
+#### Watchman
+
+Can be used to speed up Django's `runserver` command
+
+```shell
+brew install watchman
+```
+
+#### ElasticSearch
+
+Used for search functionality
+
+```shell
+brew install elasticsearch@7
+```
+
+#### Invoke
+
+[Invoke](https://www.pyinvoke.org/) Is used to organise project tasks including the application installation process
+
+```shell
+pip install invoke==1.7.3
+
+# Enable tab completion
+inv --print-completion-script zsh >> ~/.zshrc
+
+# View available tasks
+inv -l
+```
+
+---
+
+# Setup
+
+#### Clone the repository
+
+Clone the repo to an appropriate place on your laptop
+
+```shell
+# Optional: create a `projects` folder to house cloned repositories.
+mkdir ~/projects
+cd ~/projects
+
+# Clone repo.
+git clone git@github.com:edjchapman/project_name.git
+cd project_name
+```
+
+#### Create databases
+
+```shell
+createdb project_name
+```
+
+#### Create a virtualenv
+
+From within the root folder where the project is checked out, set the local versions of Python:
+
+```shell
+pyenv local 3.10.6 2.7.18
+```
+
+Now create a virtualenv using virtualenvwrapper:
+
+```shell
+mkvirtualenv project_name
+
+# To have virtualenv change directory to the project when running `workon`,
+# run the following command from with the project directory.
+setvirtualenvproject project_name .
+```
