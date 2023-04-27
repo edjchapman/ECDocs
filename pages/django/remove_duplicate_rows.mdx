@@ -1,0 +1,74 @@
+Removing Duplicate Rows
+=======================
+
+If data is duplicated on a table it can be a problem,
+especially where the field needs to be unique.
+This can happen where data has become corrupted in some way.
+
+On a table with many rows this can be challenging to resolve,
+so it's important to minimise what's loaded into memory.
+The approaches below just operate on ids of duplicates, then processes them individually.
+
+#### Delete rows with duplicate IDs
+
+```python showLineNumbers copy
+import time
+from django.db.models import Count
+from myapp.models import MyModel
+
+# Get a list of IDs of duplicated rows
+duplicates = (
+    MyModel.objects.values("id")
+    .annotate(name_count=Count("id"))
+    .filter(name_count__gt=1)
+)
+
+# Iterate over the rows, deleting all but the first
+total = duplicates.count()
+for count, duplicate in enumerate(duplicates):
+    print(f"Processing {count} of {total}")
+    dupes = MyModel.objects.filter(id=duplicate["id"])[1:]
+    for dupe in dupes:
+        print(f"Deleting {dupe.id}")
+        # dupe.delete()  # Commented for safety
+    time.sleep(1)  # This may be needed to avoid maxing out connections to the database
+```
+
+#### Save data to CSV before deleting
+```python showLineNumbers copy
+import csv
+import time
+from django.db.models import Count
+from myapp.models import MyModel
+
+# Get a list of IDs of duplicated rows
+duplicates = (
+    MyModel.objects.values("id")
+    .annotate(name_count=Count("id"))
+    .filter(name_count__gt=1)
+)
+
+with open("/path/to/my_model_duplicate_deletions.csv", "w") as csvfile:
+    c = csv.writer(csvfile)
+    c.writerow(
+        [
+            "field1",
+            "field2",
+        ]
+    )
+    # Iterate over the rows, deleting all but the first
+    total = duplicates.count()
+    for count, duplicate in enumerate(duplicates):
+        print(f"Processing {count} of {total}")
+        dupes = MyModel.objects.filter(id=duplicate["id"])[1:]
+        for dupe in dupes:
+            print(f"Deleting {dupe.id}")
+            c.writerow(
+                [
+                    dupe["field1"],
+                    dupe["field2"],
+                ]
+            )
+            # dupe.delete()  # Commented for safety
+        time.sleep(1)  # This may be needed to avoid maxing out connections to the database
+```
