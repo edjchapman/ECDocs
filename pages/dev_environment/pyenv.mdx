@@ -9,7 +9,7 @@ It's simple, unobtrusive, and follows the UNIX tradition of single-purpose tools
 ## Pyenv
 
 Install Pyenv (MacOS)
-```shell
+```shell showLineNumbers copy
 brew update
 brew install pyenv
 
@@ -18,7 +18,7 @@ brew install openssl@1.1 openssl readline sqlite3 xz zlib
 ```
 
 Install Pyenv (Debian/Ubuntu)
-```shell
+```shell showLineNumbers copy
 curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
 
 # Dependencies
@@ -28,7 +28,7 @@ sudo apt-get install -y build-essential libssl-dev zlib1g-dev libbz2-dev \
 ```
 
 Setup shell environment
-```shell
+```shell showLineNumbers copy
 echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zshrc
 echo 'command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zshrc
 echo 'eval "$(pyenv init -)"' >> ~/.zshrc
@@ -38,7 +38,7 @@ exec "$SHELL"
 ```
 
 Install additional Python versions
-```shell
+```shell showLineNumbers copy
 # e.g. Download and install Python 3.10.4
 pyenv install 3.10.4
 
@@ -52,19 +52,19 @@ pyenv global 3.10.4
 ## Virtualenv
 
 Install virtualenvwrapper (MacOS)
-```shell
+```shell showLineNumbers copy
 PIP_REQUIRE_VIRTUALENV=false pip install virtualenvwrapper
 brew install pyenv-virtualenvwrapper
 ```
 
 Install virtualenvwrapper (Debian/Ubuntu)
-```shell
+```shell showLineNumbers copy
 PIP_REQUIRE_VIRTUALENV=false pip install virtualenvwrapper
 sudo apt install pyenv-virtualenvwrapper
 ```
 
 Add to shell config if they're not there
-```shell
+```shell showLineNumbers copy
 # virtualenvwrapper
 export WORKON_HOME=$HOME/.virtualenvs
 pyenv virtualenvwrapper
