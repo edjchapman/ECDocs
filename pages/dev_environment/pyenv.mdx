@@ -6,10 +6,14 @@ Pyenv
 pyenv lets you easily switch between multiple versions of Python.
 It's simple, unobtrusive, and follows the UNIX tradition of single-purpose tools that do one thing well.
 
+## Pyenv
+
 Install Pyenv
 ```shell
 brew update
 brew install pyenv
+# Install dependencies
+brew install openssl@1.1 openssl readline sqlite3 xz zlib
 ```
 
 Setup shell environment
@@ -32,4 +36,19 @@ pyenv local 3.10.4
 
 # Select globally for your user account
 pyenv global 3.10.4
+```
+
+## Virtualenv
+
+Install virtualenvwrapper for managing environments
+```shell
+PIP_REQUIRE_VIRTUALENV=false pip install virtualenvwrapper
+brew install pyenv-virtualenvwrapper
+```
+
+Add to shell config if they're not there
+```shell
+# virtualenvwrapper
+export WORKON_HOME=$HOME/.virtualenvs
+pyenv virtualenvwrapper
 ```
