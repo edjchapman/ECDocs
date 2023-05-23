@@ -8,12 +8,23 @@ It's simple, unobtrusive, and follows the UNIX tradition of single-purpose tools
 
 ## Pyenv
 
-Install Pyenv
+Install Pyenv (MacOS)
 ```shell
 brew update
 brew install pyenv
-# Install dependencies
+
+# Dependencies
 brew install openssl@1.1 openssl readline sqlite3 xz zlib
+```
+
+Install Pyenv (Debian/Ubuntu)
+```shell
+curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash
+
+# Dependencies
+sudo apt-get install -y build-essential libssl-dev zlib1g-dev libbz2-dev \
+    libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev \
+    xz-utils tk-dev libffi-dev liblzma-dev python3-openssl
 ```
 
 Setup shell environment
@@ -40,10 +51,16 @@ pyenv global 3.10.4
 
 ## Virtualenv
 
-Install virtualenvwrapper for managing environments
+Install virtualenvwrapper (MacOS)
 ```shell
 PIP_REQUIRE_VIRTUALENV=false pip install virtualenvwrapper
 brew install pyenv-virtualenvwrapper
+```
+
+Install virtualenvwrapper (Debian/Ubuntu)
+```shell
+PIP_REQUIRE_VIRTUALENV=false pip install virtualenvwrapper
+sudo apt install pyenv-virtualenvwrapper
 ```
 
 Add to shell config if they're not there
