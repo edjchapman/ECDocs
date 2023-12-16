@@ -1,0 +1,158 @@
+Pre-Commit Hooks
+================
+
+## Introduction
+
+Implementing these tools is helpful for several key reasons, including:
+
+- **Uniform Code Formatting**: By standardizing aspects like line breaks and indentation, these tools make it easier to understand and navigate unfamiliar code, reducing the effort needed to comprehend it.
+
+- **Fewer Merge Conflicts**: Consistency in formatting leads to a significant reduction in merge conflicts, simplifying code integration and collaboration.
+
+- **Enhanced Code Quality**: When your code looks clean and well-organized, it sets a quality standard that encourages the development of high-quality logic and functionality.
+
+- **Early Bug Detection**: Automated static analysis tools are effective in identifying potential bugs and issues early in the development cycle, long before the code reaches a pull request or a production environment.
+
+By incorporating these automated tools into your workflow, you'll not only improve the readability and maintainability of your code but also enhance the overall development process.
+
+
+---
+
+## Setup
+
+### Prerequisites
+
+- Ensure **Python** is installed on your machine.
+- Make sure your project is using **Git** for version control.
+
+### 1. Install pre-commit
+
+Install the `pre-commit` framework via pip.
+
+```bash
+# Useful to add this to your dev requirements too
+pip install pre-commit
+```
+
+### 2. Configure pre-commit for Your Project
+
+Create a `.pre-commit-config.yaml` file at the root of your Git repository
+
+Here is an example with some useful hooks:
+
+```yaml filename=".pre-commit-config.yaml" showLineNumbers copy
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        args: [ '--profile', 'black' ]
+
+  - repo: https://github.com/psf/black
+    rev: 23.11.0
+    hooks:
+      - id: black
+
+  - repo: https://github.com/adamchainz/blacken-docs
+    rev: 1.16.0
+    hooks:
+    -   id: blacken-docs
+        types: [markdown, mdx]
+        additional_dependencies:
+        - black==23.11.0
+```
+
+### 3. Install the pre-commit Hooks
+
+Run the following command in your repository:
+
+```bash
+pre-commit install
+```
+
+This will set up the hooks to run automatically before each `git commit`.
+
+### 4. Optional: Run Hooks Against All Files
+
+Run the hooks against all the files in your project (useful for existing projects):
+
+```bash
+pre-commit run --all-files
+```
+
+### 5. Commit Changes
+
+If the hooks made any modifications, stage and commit these changes:
+
+```bash
+git add .
+git commit -m "Apply Black and isort formatting"
+```
+
+### 6. Collaboration and Continuous Integration
+
+- Ensure every team member has pre-commit installed, and the hooks set up.
+
+---
+
+## Introducing Formatting to an Existing Project
+
+### Using `.git-blame-ignore-revs` for Linting Commits
+
+When introducing new linting rules in pre-commit hooks,
+a large number of files might get reformatted.
+
+This can clutter the Git history, particularly affecting the usefulness of `git blame`.
+
+The `.git-blame-ignore-revs` file helps to mitigate this issue by telling
+`git blame` to ignore certain commits.
+
+### Steps to Implement `.git-blame-ignore-revs`
+
+#### 1. Perform the Linting
+
+Run the new linters/formatters on your codebase and commit the changes. This will likely result in a large commit.
+
+#### 2. Create `.git-blame-ignore-revs` File
+
+Create a new file in your repository named `.git-blame-ignore-revs`. This file will list the commits that should be ignored by `git blame`.
+
+#### 3. Add the Linting Commit Hash
+
+Find the commit hash of your linting commit using `git log`, and add it to the `.git-blame-ignore-revs` file. Optionally, add a comment for clarity.
+
+```plaintext
+# Black formatting
+abc1234def56789ghijklmnopqrstuvwxyz
+```
+
+*Replace the example hash with your actual commit hash.*
+
+#### 4. Configure Git to Recognize the File
+
+Run the following command to configure Git to use the `.git-blame-ignore-revs` file:
+
+```bash
+git config blame.ignoreRevsFile .git-blame-ignore-revs
+```
+
+### Benefits
+
+- **Maintains a Cleaner Git History**: Helps `git blame` to show more relevant historical information, ignoring massive formatting changes.
+
+- **Improves Code Reviews**: Focus remains on substantive changes rather than formatting adjustments.
+
+### Best Practices
+
+- **Document the Usage**: Ensure to document this in your project guidelines so all team members are aware.
+
+- **Use Only for Major Refactorings**: This should be reserved for commits with non-functional changes like reformatting.
+
+By incorporating `.git-blame-ignore-revs` in your project, you preserve the effectiveness of `git blame` for tracking meaningful changes, even after introducing substantial linting modifications.
