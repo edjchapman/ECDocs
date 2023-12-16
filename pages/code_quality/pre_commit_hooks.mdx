@@ -27,7 +27,7 @@ By incorporating these automated tools into your workflow, you'll not only impro
 
 ### 1. Install pre-commit
 
-Install the `pre-commit` framework via pip.
+Install the `pre-commit` framework via pip [Docs](https://pre-commit.com/).
 
 ```bash copy
 # Useful to add this to your dev requirements too
@@ -39,6 +39,12 @@ pip install pre-commit
 Create a `.pre-commit-config.yaml` file at the root of your Git repository
 
 Here is an example with some useful hooks:
+
+- pre-commit-hooks [Docs](https://github.com/pre-commit/pre-commit-hooks)
+- isort: [Docs](https://pycqa.github.io/isort/)
+- black [Docs](https://github.com/psf/black)
+- blacken-docs [Docs](https://github.com/adamchainz/blacken-docs)
+
 
 ```yaml filename=".pre-commit-config.yaml" showLineNumbers copy
 repos:
@@ -81,7 +87,7 @@ This will set up the hooks to run automatically before each `git commit`.
 
 ### 4. Optional: Run Hooks Against All Files
 
-Run the hooks against all the files in your project (useful for existing projects):
+Run the hooks against all the files in the project (useful for existing projects):
 
 ```bash copy
 pre-commit run --all-files
