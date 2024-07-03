@@ -1,147 +1,544 @@
 Django Project Setup
 ========================
 
-#### Install requirements
+These are the steps I follow to setup a Django project from scratch.
+
+---
+
+### Project Structure
+
+The project will look like this at the end of the steps.
 
 ```shell
-pip install -r requirements.txt
-```
-
-#### Install git hook scripts
-
-```shell
-pre-commit install
-```
-
-#### Setup Pyenv
-
-```shell
-# Install Pyenv using Homebrew
-brew install pyenv
-
-# Install system packages needed to install Python
-brew install openssl@1.1 openssl readline sqlite3 xz zlib
-
-# Restart your terminal
-exec "$SHELL"
-
-# Install the appropriate Python versions
-pyenv install 3.10.6
-pyenv global 3.10.6
-pyenv install 2.7.18
-```
-
-#### Install Virtualenv for managing separate Python environments
-
-```shell
-# Install virtualenvwrapper and its Pyenv wrapper
-PIP_REQUIRE_VIRTUALENV=false pip install virtualenvwrapper
-brew install pyenv-virtualenvwrapper
-
-# Add the following lines to your shell startup script (~/.zshrc or ~/.bashrc)
-# virtualenvwrapper
-export WORKON_HOME=$HOME/.virtualenvs
-pyenv virtualenvwrapper
-
-# Restart shell
-exec "$SHELL"
-```
-
-#### PostgreSQL
-
-Install Postgres using the [Postgres.app macOS app](https://postgresapp.com/) following the instructions they provide
-to configure your $PATH to use the included command line tools. For example:
-
-```shell
-cat >> ~/.zshrc <<EOL
-export PATH="\$PATH:/Applications/Postgres.app/Contents/Versions/latest/bin"
-EOL
-```
-
-#### Memcached
-
-Caching service
-
-```shell
-brew install libmemcached memcached
-```
-
-#### RabbitMQ
-
-Message broker with Celery
-
-```shell
-brew install rabbitmq
-```
-
-#### Watchman
-
-Can be used to speed up Django's `runserver` command
-
-```shell
-brew install watchman
-```
-
-#### ElasticSearch
-
-Used for search functionality
-
-```shell
-brew install elasticsearch@7
-```
-
-#### Invoke
-
-[Invoke](https://www.pyinvoke.org/) Is used to organise project tasks including the application installation process
-
-```shell
-pip install invoke==1.7.3
-
-# Enable tab completion
-inv --print-completion-script zsh >> ~/.zshrc
-
-# View available tasks
-inv -l
+myproject/
+├── backend/
+│   ├── myproject/
+│   │   ├── __init__.py
+│   │   ├── settings.py
+│   │   ├── urls.py
+│   │   ├── wsgi.py
+│   ├── manage.py
+│   ├── requirements.txt
+│   ├── Dockerfile.dev
+│   ├── Dockerfile.prod
+│   ├── init-db.sh
+│   ├── .local.env
+│   ├── .env.prod
+│   ├── .pre-commit-config.yaml
+├── docker compose.yml
+├── docker compose.prod.yml
+└── README.md
 ```
 
 ---
 
-# Setup
+## Setup Project
 
-#### Clone the repository
+### Prerequisites
 
-Clone the repo to an appropriate place on your laptop
+- Python
+- Git
+- Docker
+- Docker Compose
+
+---
+
+### Setup Environment
+
+Virtualenvironment to set up project.
+
+This will be replaced by a Docker development environment later.
 
 ```shell
-# Optional: create a `projects` folder to house cloned repositories.
-mkdir ~/projects
-cd ~/projects
-
-# Clone repo.
-git clone git@github.com:edjchapman/project_name.git
-cd project_name
+mkdir myproject
+cd myproject
+python3 -m venv .venv
+source .venv/bin/activate
 ```
 
-#### Create databases
+---
+
+### Initialise Django Project
 
 ```shell
-createdb project_name
+pip install django python-decouple
+mkdir backend
+cd backend
+django-admin startproject myproject .
 ```
 
-#### Create a virtualenv
+You should now have a directory structure that looks like this.
 
-From within the root folder where the project is checked out, set the local versions of Python:
+This leaves space for a frontend and other services to be added and organised easily.
 
 ```shell
-pyenv local 3.10.6 2.7.18
+myproject/
+    backend/
+        manage.py
+        myproject/
+            __init__.py
+            settings.py
+            urls.py
+            wsgi.py
+            asgi.py
 ```
 
-Now create a virtualenv using virtualenvwrapper:
+---
+
+### Admin Files
 
 ```shell
-mkvirtualenv project_name
+cd myproject  # Repo root
+touch .gitignore  # Get one that suits your needs.
+touch LICENSE  # Choose an appropriate license.
+touch README.md  # Add initial title
+```
 
-# To have virtualenv change directory to the project when running `workon`,
-# run the following command from with the project directory.
-setvirtualenvproject project_name .
+---
+
+### Python Requirements
+
+Add a `requirements.txt` file to the backend directory and add the following:
+
+Update the versions as appropriate
+
+```shell
+## Django Web Framework
+# https://pypi.org/project/Django/
+Django==4.0.2
+
+## WSGI HTTP Server
+# https://pypi.org/project/gunicorn/
+gunicorn==22.0.0
+
+## Pre-commit hooks
+# https://pypi.org/project/pre-commit/
+pre-commit==3.7.1
+
+## Postgres Client
+# https://pypi.org/project/psycopg2/
+psycopg2-binary==2.9.9
+
+## Environment Variables
+# https://pypi.org/project/python-decouple/
+python-decouple==3.8
+
+## https://pypi.org/project/ruff/0.0.178/
+# Linter
+ruff==0.4.8
+```
+
+---
+
+### Git Init
+
+```shell
+cd myproject  # Repo root
+git init
+git add .
+git commit -m "Initial Project Setup"
+git remote add origin `URL`  # Where URL is your GitHub or other remote repository.
+git push origin main
+```
+
+---
+
+### Environment Variables
+
+Create a `.local.env` file in the `backend` directory with the following content:
+
+```shell
+# DATABASE
+POSTGRES_DB=db_name
+POSTGRES_USER=db_user
+POSTGRES_PASSWORD=db_password
+POSTGRES_DB_HOST=db
+POSTGRES_DB_PORT=5432
+
+# DJANGO
+DEBUG=True
+SECRET_KEY=secret_key
+ALLOWED_HOSTS=*
+```
+
+Create a `.prod.template.env` placeholder production env file
+
+```shell
+# DATABASE
+POSTGRES_DB=db_name
+POSTGRES_USER=db_user
+POSTGRES_PASSWORD=db_password
+POSTGRES_DB_HOST=db
+POSTGRES_DB_PORT=5432
+
+# DJANGO
+DEBUG=False
+SECRET_KEY=your_production_secret_key
+ALLOWED_HOSTS=your_production_domain.com
+```
+
+---
+
+### Env Vars in Django Settings
+
+Use the `python-decouple` library to read and parse environment variables.
+
+Edit the file: `backend/myproject/settings.py`
+
+```python
+from decouple import config, Csv
+
+DEBUG = config("DEBUG", default=False, cast=bool)
+SECRET_KEY = config("SECRET_KEY")
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="", cast=Csv())
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": config("POSTGRES_DB"),
+        "USER": config("POSTGRES_USER"),
+        "PASSWORD": config("POSTGRES_PASSWORD"),
+        "HOST": config("POSTGRES_DB_HOST"),
+        "PORT": config("POSTGRES_DB_PORT", cast=int),
+    }
+}
+```
+
+---
+
+## Docker Configuration
+
+### Dockerfile (Dev)
+
+Create a `Dockerfile.dev` file in the `backend` directory with the following content:
+
+```dockerfile
+# backend/Dockerfile.dev
+
+# Start from a Python base image
+FROM python:3.12.4-slim-bullseye
+
+  # Set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+  # Set work directory in container
+WORKDIR /backend
+
+  # Install dependencies
+COPY requirements.txt /backend/
+RUN pip install --upgrade pip && \
+pip install --no-cache-dir -r requirements.txt
+
+  # Copy the rest of the application code
+COPY . /backend/
+
+  # Expose the port that the Django app runs on
+EXPOSE 8000
+
+  # Run the Django development server
+CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+```
+
+---
+
+### Dockerfile (Prod)
+
+Create a `Dockerfile.prod` file in the `backend` directory with the following content:
+
+```yaml
+# backend/Dockerfile.prod
+
+# Start from a Python base image
+FROM python:3.12.4-slim-bullseye
+
+  # Set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+  # Set work directory in container
+WORKDIR /backend
+
+  # Install dependencies
+COPY requirements.txt /backend/
+RUN pip install --upgrade pip && \
+pip install --no-cache-dir -r requirements.txt
+
+  # Copy the rest of the application code
+COPY . /backend/
+
+  # Collect static files
+RUN python manage.py collectstatic --noinput
+
+  # Expose the port that the Django app runs on
+EXPOSE 8000
+
+  # Run the Gunicorn server
+CMD ["gunicorn", "core.wsgi:application", "--bind", "0.0.0.0:8000"]
+```
+
+---
+
+### Docker Compose (Dev)
+
+Create a `docker compose.yml` file in the root of the repo with the following content:
+
+```yaml
+# myproject/docker compose.yml
+
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16.3
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+      - ./backend/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
+    ports:
+      - "5432:5432"
+    env_file:
+      - ./backend/.local.env
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./backend:/backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    env_file:
+      - ./backend/.local.env
+
+volumes:
+  postgres_data:
+```
+
+---
+
+### Docker Compose (Prod)
+
+Create a `docker compose.prod.yml` file in the root of the repo with the following content:
+
+```yaml
+# myproject/docker compose.prod.yml
+
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16.3
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+      - ./backend/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
+    ports:
+      - "5432:5432"
+    env_file:
+      - ./backend/.env.prod
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    command: gunicorn core.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - ./backend:/backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    env_file:
+      - ./backend/.env.prod
+
+volumes:
+  postgres_data:
+```
+
+---
+
+### DB Initialisation Script
+
+Create an `init-db.sh` file in the backend directory with the following contents:
+
+```shell
+# myproject/backend/init-db.sh
+
+#!/bin/bash
+set -e
+
+psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "postgres" <<-EOSQL
+    DO \$\$
+    BEGIN
+        IF NOT EXISTS (SELECT FROM pg_catalog.pg_roles WHERE rolname = '$POSTGRES_USER') THEN
+            CREATE ROLE $POSTGRES_USER WITH LOGIN PASSWORD '$POSTGRES_PASSWORD';
+        END IF;
+    END
+    \$\$;
+
+    DO \$\$
+    BEGIN
+        IF NOT EXISTS (SELECT FROM pg_database WHERE datname = '$POSTGRES_DB') THEN
+            CREATE DATABASE $POSTGRES_DB;
+        END IF;
+    END
+    \$\$;
+
+    GRANT ALL PRIVILEGES ON DATABASE $POSTGRES_DB TO $POSTGRES_USER;
+EOSQL
+```
+
+---
+
+## Commit Progress
+
+```shell
+git add .
+git commit -m "Add Docker configuration"
+git push origin main
+```
+
+---
+
+## Code Quality Tooling
+
+### Ruff Pre-Commit Hooks
+
+1. Install pre-commit:
+
+    ```shell
+    pip install pre-commit
+    ```
+
+2. Create a `.pre-commit-config.yaml` file to the repo root.
+
+    ```yaml
+    repos:
+    - repo: https://github.com/astral-sh/ruff-pre-commit
+      # Ruff version.
+      rev: v0.4.8
+      hooks:
+        # Run the linter.
+        - id: ruff
+          types_or: [ python, pyi, jupyter ]
+          args: [ --fix ]
+        # Run the formatter.
+        - id: ruff-format
+          types_or: [ python, pyi, jupyter ]
+    ```
+
+3. Install the pre-commit hooks:
+
+    ```shell
+    pre-commit install
+    ```
+
+---
+
+### Set Up Ruff to Run in GitHub Actions
+
+In the repo root add `.github/workflows/lint.yml`
+
+```yaml
+name: Lint
+
+on: [ push, pull_request ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff==0.4.8
+
+      # Update output format to enable automatic inline annotations.
+      - name: Run Ruff
+        run: ruff check --output-format=github .
+```
+
+---
+
+### Lint Rules
+
+Add `pyproject.toml` to the repo root and add the following:
+
+```toml
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+# Add other (ruff) configurations as needed
+```
+
+---
+
+### Run pre-commit on all files
+
+```shell
+pre-commit run --all-files
+```
+
+---
+
+## Commit Progress
+
+```shell
+git add .
+git commit -m "Initial Ruff Lint"
+git push origin main
+```
+
+---
+
+## Running the project
+
+### In Development
+
+- **Build the Docker images**:
+  ```sh
+  docker compose build
+  ```
+
+- **Start the services**:
+  ```sh
+  docker compose up
+  ```
+
+- **Stop the services**:
+  ```sh
+  docker compose down
+  ```
+
+- **Run database migrations**:
+  ```sh
+  docker compose exec backend python manage.py migrate
+  ```
+
+- **Create a superuser**:
+  ```sh
+  docker compose exec backend python manage.py createsuperuser
+  ```
+
+- **View logs**:
+  ```sh
+  docker compose logs
+  ```
+
+---
+
+### In Production
+
+```sh
+docker-compose -f docker-compose.prod.yml build
+docker-compose -f docker-compose.prod.yml up -d
 ```
