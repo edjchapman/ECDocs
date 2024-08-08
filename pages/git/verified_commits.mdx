@@ -1,0 +1,80 @@
+## Resolving GPG Email Mismatch Issues
+
+### Why This Happens
+
+#### GPG Key Email Mismatch
+- Each GPG key is associated with one or more email addresses. If the email address in the commit doesn't match the email addresses linked to the GPG key, verification fails.
+
+#### Different Emails for Personal and Work Accounts
+- Using different emails for personal and work-related commits can lead to mismatches if the GPG key is not configured with the correct email.
+
+#### Vigilant Mode in GitHub
+- GitHub's "vigilant mode" requires all commits to be signed with a GPG key that matches the committer's email, enhancing security.
+
+### How to Resolve the Issue
+
+#### Option 1: Add the Organizational Email to Your GPG Key
+
+1. **Edit the GPG Key:**
+   ```bash
+   gpg --edit-key <your-key-id>
+   ```
+
+2. **Add a New Email:**
+   ```bash
+   adduid
+   ```
+   Follow the prompts to add your organizational email.
+
+3. **Save the Changes:**
+   ```bash
+   save
+   quit
+   ```
+
+4. **Update GitHub with the Updated GPG Key:**
+   Export the updated key:
+   ```bash
+   gpg --armor --export <your-key-id>
+   ```
+   Add the key to GitHub under [GPG Keys settings](https://github.com/settings/keys).
+
+#### Option 2: Use a Separate GPG Key for Organizational Work
+
+1. **Generate a New GPG Key:**
+   ```bash
+   gpg --full-generate-key
+   ```
+   Use your work email during the setup process.
+
+2. **List GPG Keys to Obtain the Key ID:**
+   ```bash
+   gpg --list-secret-keys --keyid-format LONG
+   ```
+
+3. **Configure Git to Use the New Key:**
+   Set the `user.signingkey` in your work repo:
+   ```bash
+   git config user.email "your-work-email@example.com"
+   git config user.signingkey <new-work-key-id>
+   ```
+
+4. **Add the New GPG Key to GitHub:**
+   Export the new key and add it to GitHub:
+   ```bash
+   gpg --armor --export <new-work-key-id>
+   ```
+   Add it to [GitHub GPG Keys settings](https://github.com/settings/keys).
+
+#### Option 3: Manually Configure the Committer Email
+
+Ensure that the email used in your commits matches the one linked with your GPG key. You can set this in your repository:
+
+```bash
+git config user.email "matching-email@example.com"
+```
+
+### Why It's Important
+
+- **Security:** Ensuring the email addresses match is critical for maintaining the integrity of your commits.
+- **Vigilant Mode:** This mode enforces strict identity verification, protecting your codebase's security.
