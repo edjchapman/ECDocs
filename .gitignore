@@ -12,3 +12,6 @@ yarn-error.log
 
 # Virtualenv
 venv/
+
+# Tempfiles
+.DS_Store
